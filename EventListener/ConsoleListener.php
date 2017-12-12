@@ -8,7 +8,8 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Types\Type;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
-use Symfony\Component\Console\Event\ConsoleExceptionEvent;
+use Symfony\Component\Console\Event\ConsoleErrorEvent;
+//use Symfony\Component\Console\Event\ConsoleExceptionEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Debug\Exception\FlattenException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -53,7 +54,8 @@ class ConsoleListener implements EventSubscriberInterface
     {
         return array(
             ConsoleEvents::COMMAND   => 'onCommand',
-            ConsoleEvents::EXCEPTION => 'onException',
+//            ConsoleEvents::EXCEPTION => 'onException',
+            ConsoleEvents::ERROR => 'onError',
             ConsoleEvents::TERMINATE => 'onTerminate',
         );
     }
@@ -66,13 +68,19 @@ class ConsoleListener implements EventSubscriberInterface
         }
     }
 
-    public function onException(ConsoleExceptionEvent $event)
+    public function onError(ConsoleErrorEvent $event)
     {
-        $ex = $event->getException();
+        $ex = $event->getError();
         $this->exception = $ex;
     }
 
-    public function onTerminate()
+//    public function onException(ConsoleExceptionEvent $event)
+//    {
+//        $ex = $event->getException();
+//        $this->exception = $ex;
+//    }
+//
+    public function onTerminate(ConsoleTerminateEvent $event)
     {
         $this->saveDebugInformation();
     }
